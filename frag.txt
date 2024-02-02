@@ -1,0 +1,4 @@
+Fragmentation is done by the network layer when the maximum size of datagram is greater than maximum size of data that can be
+held in a frame i.e., its Maximum Transmission Unit (MTU).
+The network layer divides the datagram received from the transport layer into fragments so that data flow is not disrupted. 
+
