@@ -2,9 +2,13 @@
 
 ## File Structure Info:
 
-1. `client_n.py` & `server_n.py` -> Have code to normally send files and store a single received file
-2. `client_c.py` & `server_c.py`-> Have code to verify by hashing the data using hashlib md5 send files, store a single received file, along with verifying the hashed data, to avoid data tampering
-3. `client_f.py` & `server_f.py`-> Have code to also have the IPv4 header information, stored into separate fragmented files, along with the final reassembled file.
+1. `client_n.py` & `server_n.py` -> Has code to normally send files and store a single received file
+2. `client_c.py` & `server_c.py`-> Has code to verify by hashing the data using hashlib md5 send files, store a single received file, along with verifying the hashed data, to avoid data tampering
+3. `client_f.py` & `server_f.py`-> Has code to also have the IPv4 header information, stored into separate fragmented files, along with the final reassembled file.
+
+## Final Output:
+
+<img width="1708" alt="Screenshot 2024-02-28 at 20 41 43" src="https://github.com/marcdhi/CS301M-IPv4-Fragmentation/assets/97223188/63a26e7a-4d01-4bfd-af22-814724c02623">
 
 
 ### **1. Maximum Transmission Unit (MTU):**
