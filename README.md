@@ -9,7 +9,7 @@
 ## Final Output:
 
 <img width="1708" alt="Screenshot 2024-02-28 at 20 41 43" src="https://github.com/marcdhi/CS301M-IPv4-Fragmentation/assets/97223188/63a26e7a-4d01-4bfd-af22-814724c02623">
-
+<img width="1708" alt="Screenshot 2024-02-28 at 20 41 43" src="https://github.com/marcdhi/CS301M-IPv4-Fragmentation/assets/97223188/b26982b2-c421-4d17-a3a1-915177fb0601">
 
 ### **1. Maximum Transmission Unit (MTU):**
 MTU refers to the maximum size of a single data packet that can be transmitted over a network. Different networks or network technologies have different MTU sizes. When data needs to be sent across a network, it must be broken down into smaller pieces (fragments) if it exceeds the MTU size of that network.
