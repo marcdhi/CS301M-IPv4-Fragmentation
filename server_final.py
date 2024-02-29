@@ -49,7 +49,7 @@ def start_server(server_ip, server_port,folder_name):
         received_message += packet_payload.decode('utf-8')
 
         # Write the received message to a file
-        with open(f'reassembled_{packet_count}.txt', 'w') as output_file:
+        with open(f'{folder_name}/reassembled_{packet_count}.txt', 'w') as output_file:
             output_file.write(received_message)
 
         # Write the transmission info to a file
