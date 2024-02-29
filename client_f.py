@@ -26,13 +26,13 @@ def send_fragmented_data(file_name, mtu):
                 print(f"Client: Fragmenting data: Fragment {fragment_count}, size = {bytes_read} bytes")
 
                 # Calculate checksum for the fragment
-                checksum = calculate_checksum(buffer[:bytes_read])
+                # checksum = calculate_checksum(buffer[:bytes_read])
 
                 # Simulate fragmentation by sending data in chunks of MTU size
                 stream.sendall(struct.pack('!I', bytes_read))  # Send fragment size
                 stream.sendall(buffer[:bytes_read])  # Send fragment data
-                stream.sendall(checksum.encode())  # Send checksum
-                print(f"Client: Sent fragment {fragment_count}, checksum: {checksum}")
+                # stream.sendall(checksum.encode())  # Send checksum
+                print(f"Client: Sent fragment {fragment_count}")
 
     print(f"Client: Finished sending {fragment_count} fragments")
 

@@ -4,16 +4,24 @@ import struct
 import hashlib
 import shutil
 
+
 def ipv4_header(data):
     ip_header = struct.unpack('!BBHHHBBH4s4s', data[:20])
     version_ihl = ip_header[0]
     version = version_ihl >> 4
     ihl = version_ihl & 0xF
+    type_of_service = ip_header[1]
+    total_length = ip_header[2]
+    identification = ip_header[3]
+    flags_fragment_offset = ip_header[4]
+    flags = flags_fragment_offset >> 13
+    fragment_offset = flags_fragment_offset & 0x1FFF
     ttl = ip_header[5]
     protocol = ip_header[6]
+    header_checksum = ip_header[7]
     src_ip = socket.inet_ntoa(ip_header[8])
     dest_ip = socket.inet_ntoa(ip_header[9])
-    return ip_header, version_ihl, version, ihl, ttl, protocol, src_ip, dest_ip
+    return ip_header, version_ihl, version, ihl, type_of_service, total_length, identification, flags, fragment_offset, ttl, protocol, header_checksum, src_ip, dest_ip
 
 # Function to calculate checksum
 def calculate_checksum(data):
@@ -47,48 +55,60 @@ def receive_fragmented_data(stream, folder_name):
             break
 
         buffer = stream.recv(fragment_size)
-        # Receive checksum
-        checksum_received = stream.recv(32).decode()
-        # Calculate checksum for the received data
-        checksum_calculated = calculate_checksum(buffer)
 
-        # Verify checksum
-        if checksum_received == checksum_calculated:
-            print(f"Server: Received Fragment {fragment_number} of size {fragment_size} bytes, checksum verified")
+       
+        print(f"Server: Received Fragment {fragment_number} of size {fragment_size} bytes, checksum verified")
 
-            ip_header, version_ihl, version, ihl, ttl, protocol, src_ip, dest_ip = ipv4_header(buffer)
+        print("THIS IS THAT SHIT ------>>>>", buffer[:20])
 
-            # Write IPv4 header information to a separate file or append it to the reassembled file
-            header_info_file_name = os.path.join(folder_name, f"ipv4_header_{fragment_number}_info.txt")
-            with open(header_info_file_name, 'wb') as header_info_file:
-                header_info_file.write(f"Fragment Number: {fragment_number}\n".encode())
-                header_info_file.write(f"Version: {version}\n".encode())
-                header_info_file.write(f"IHL: {ihl}\n".encode())
-                header_info_file.write(f"TTL: {ttl}\n".encode())
-                header_info_file.write(f"Protocol: {protocol}\n".encode())
-                header_info_file.write(f"Source IP: {src_ip}\n".encode())
-                header_info_file.write(f"Destination IP: {dest_ip}\n\n".encode())
+        ip_header, version_ihl, version, ihl, type_of_service, total_length, identification, flags, fragment_offset, ttl, protocol, header_checksum, src_ip, dest_ip = ipv4_header(buffer)
 
-                header_info_file.write(f"------Fragmented Data------\n\n".encode())
+        # Write IPv4 header information to a separate file or append it to the reassembled file
+        header_info_file_name = os.path.join(folder_name, f"ipv4_header_{fragment_number}_info.txt")
+        with open(header_info_file_name, 'wb') as header_info_file:
+            header_info_file.write(f"Fragment Number: {fragment_number}\n".encode())
+            header_info_file.write(f"------IPv4 Header Information------\n\n".encode())
+            header_info_file.write(f"Version IHL: {version_ihl}\n".encode())
+            header_info_file.write(f"Version: {version}\n".encode())
+            header_info_file.write(f"IHL: {ihl}\n".encode())
+            header_info_file.write(f"TTL: {ttl}\n".encode())
+            header_info_file.write(f"Type of Service: {type_of_service}\n".encode())
+            header_info_file.write(f"Total Length: {total_length}\n".encode())
+            header_info_file.write(f"Identification: {identification}\n".encode())
+            header_info_file.write(f"Flags: {flags}\n".encode())
+            header_info_file.write(f"Fragment Offset: {fragment_offset}\n".encode())
+            header_info_file.write(f"Checksum: {header_checksum}\n".encode())
+            header_info_file.write(f"Protocol: {protocol}\n".encode())
+            header_info_file.write(f"Source IP: {src_ip}\n".encode())
+            header_info_file.write(f"Destination IP: {dest_ip}\n\n".encode())
 
-                # Write fragment data to the file
-                header_info_file.write(buffer)
-            # Append fragment to reassembled data
-            reassembled_data += buffer
-        else:
-            print(f"Server: Error in Fragment {fragment_number}: Checksum mismatch")
+            header_info_file.write(f"------Fragmented Data------\n\n".encode())
+
+            # Write fragment data to the file
+            header_info_file.write(buffer)
+        # Append fragment to reassembled data
+        reassembled_data += buffer
+        
 
         fragment_number += 1
 
 
-    ip_header, version_ihl, version, ihl, ttl, protocol, src_ip, dest_ip = ipv4_header(reassembled_data)
+    ip_header, version_ihl, version, ihl, type_of_service, total_length, identification, flags, fragment_offset, ttl, protocol, header_checksum, src_ip, dest_ip = ipv4_header(reassembled_data)
 
     # Write reassembled data to a file
     reassembled_file_name = os.path.join(folder_name, "received_frags.txt")
     with open(reassembled_file_name, 'wb') as reassembled_file:
+        reassembled_file.write(f"------IPv4 Header Information------\n\n".encode())
+        reassembled_file.write(f"Version IHL: {version_ihl}\n".encode())
         reassembled_file.write(f"Version: {version}\n".encode())
         reassembled_file.write(f"IHL: {ihl}\n".encode())
         reassembled_file.write(f"TTL: {ttl}\n".encode())
+        reassembled_file.write(f"Type of Service: {type_of_service}\n".encode())
+        reassembled_file.write(f"Total Length: {total_length}\n".encode())
+        reassembled_file.write(f"Identification: {identification}\n".encode())
+        reassembled_file.write(f"Flags: {flags}\n".encode())
+        reassembled_file.write(f"Fragment Offset: {fragment_offset}\n".encode())
+        reassembled_file.write(f"Checksum: {header_checksum}\n".encode())
         reassembled_file.write(f"Protocol: {protocol}\n".encode())
         reassembled_file.write(f"Source IP: {src_ip}\n".encode())
         reassembled_file.write(f"Destination IP: {dest_ip}\n\n".encode())
